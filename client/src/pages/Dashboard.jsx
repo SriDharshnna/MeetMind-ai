@@ -9,9 +9,11 @@ import {
   FileText,
   ChevronRight,
   TrendingUp,
-  User
+  User,
+  RefreshCw
 } from 'lucide-react';
 import { formatDate, getDeadlineMeta } from '../utils/helpers';
+import * as api from '../services/api';
 
 export default function Dashboard({
   meetings,
@@ -34,6 +36,23 @@ export default function Dashboard({
   const upcomingTasks = tasks
     .filter((t) => t.status !== 'Completed')
     .slice(0, 5);
+
+  const [isScanning, setIsScanning] = React.useState(false);
+  const [scanToast, setScanToast] = React.useState('');
+
+  const handleRunMonitoringScan = async () => {
+    try {
+      setIsScanning(true);
+      const res = await api.triggerMonitoringScan();
+      setScanToast(`Agent 3 scan complete: ${res?.overdueCount || 0} overdue tasks evaluated.`);
+      setTimeout(() => setScanToast(''), 3500);
+    } catch (err) {
+      setScanToast(`Scan error: ${err.message}`);
+      setTimeout(() => setScanToast(''), 3500);
+    } finally {
+      setIsScanning(false);
+    }
+  };
 
   const handleViewMeeting = (id) => {
     setSelectedMeetingId(id);
@@ -119,9 +138,17 @@ export default function Dashboard({
         </div>
       </div>
 
+      {/* Scan Toast */}
+      {scanToast && (
+        <div className="toast-notice" style={{ zIndex: 100 }}>
+          <CheckCircle2 size={16} color="var(--primary-dark)" />
+          <span>{scanToast}</span>
+        </div>
+      )}
+
       {/* Important AI-Generated Alerts Section */}
       <div className="ai-insights-card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span className="ai-badge">
               <Sparkles size={12} />
@@ -131,13 +158,24 @@ export default function Dashboard({
               Important Meeting Intelligence Alerts
             </h3>
           </div>
-          <button
-            className="btn btn-soft btn-sm"
-            onClick={() => setActivePage('ai-followup')}
-          >
-            <span>AI Follow-up Agenda</span>
-            <ArrowRight size={14} />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={handleRunMonitoringScan}
+              disabled={isScanning}
+              title="Trigger deterministic Agent 3 overdue check"
+            >
+              <RefreshCw size={13} className={isScanning ? 'animate-spin' : ''} />
+              <span>{isScanning ? 'Scanning...' : 'Scan Deadlines'}</span>
+            </button>
+            <button
+              className="btn btn-soft btn-sm"
+              onClick={() => setActivePage('ai-followup')}
+            >
+              <span>AI Follow-up Agenda</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
         </div>
 
         <div className="grid-3">

@@ -8,6 +8,8 @@ import taskRoutes from './routes/taskRoutes.js';
 import decisionRoutes from './routes/decisionRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import monitoringRoutes from './routes/monitoringRoutes.js';
+import { initMonitoringCron } from './agents/monitoringAgent.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 // Load environment variables
@@ -36,6 +38,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/decisions', decisionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/monitoring', monitoringRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -54,4 +57,6 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`[MeetMind AI Server] Running on http://localhost:${PORT}`);
+  // Initialize Agent 3: Monitoring Agent scheduled background cron
+  initMonitoringCron();
 });

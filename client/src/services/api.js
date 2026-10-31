@@ -159,3 +159,56 @@ export const deleteDecision = async (id) => {
   });
   return res;
 };
+
+// -----------------------------------------------------------------------------
+// Agentic AI & Monitoring Endpoints
+// -----------------------------------------------------------------------------
+export const generateFollowupAgenda = async () => {
+  const res = await apiRequest('/ai/generate-followup-agenda', {
+    method: 'POST'
+  });
+  return res.data;
+};
+
+export const getFollowupReport = async () => {
+  const res = await apiRequest('/ai/followup-report');
+  return res.data;
+};
+
+export const updateFollowupReport = async (id, updateData) => {
+  const res = await apiRequest(`/ai/followup-report/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(updateData)
+  });
+  return res.data;
+};
+
+export const runFullAgentWorkflow = async (payload) => {
+  const res = await apiRequest('/ai/agent-workflow', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+  return res.data;
+};
+
+export const getMonitoringAlerts = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const endpoint = query ? `/monitoring/alerts?${query}` : '/monitoring/alerts';
+  const res = await apiRequest(endpoint);
+  return res.data;
+};
+
+export const resolveMonitoringAlert = async (id) => {
+  const res = await apiRequest(`/monitoring/alerts/${id}/resolve`, {
+    method: 'POST'
+  });
+  return res.data;
+};
+
+export const triggerMonitoringScan = async () => {
+  const res = await apiRequest('/monitoring/run', {
+    method: 'POST'
+  });
+  return res.data;
+};
+

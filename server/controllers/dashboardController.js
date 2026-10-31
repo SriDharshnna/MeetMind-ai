@@ -1,6 +1,7 @@
 import { Meeting } from '../models/Meeting.js';
 import { Task } from '../models/Task.js';
 import { Decision } from '../models/Decision.js';
+import { Alert } from '../models/Alert.js';
 
 // @desc    Get consolidated dashboard metrics from actual MongoDB records
 // @route   GET /api/dashboard/stats
@@ -46,7 +47,10 @@ export const getDashboardStats = async (req, res, next) => {
       .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
       .slice(0, 5);
 
-    // 6. AI Alerts based on actual database states
+    // 6. Active Agent 3 Alerts from MongoDB
+    const agentAlerts = await Alert.find({ isResolved: false }).sort({ createdAt: -1 }).limit(10);
+
+    // 7. AI Alerts based on actual database states (backward compatibility)
     const alerts = [
       {
         id: 'alert-overdue',
@@ -89,7 +93,8 @@ export const getDashboardStats = async (req, res, next) => {
         completionRate: totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0,
         recentMeetings: enrichedRecentMeetings,
         upcomingDeadlines,
-        alerts
+        alerts,
+        agentAlerts
       }
     });
   } catch (error) {

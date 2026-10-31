@@ -169,7 +169,7 @@ export const simulateAgent1Analysis = ({
     // Check for commitments (names + must/will/complete/deadline)
     attendeesList.forEach((att) => {
       const firstName = att.name.split(' ')[0].toLowerCase();
-      if (lower.includes(firstName) && (lower.includes('complete') || lower.includes('finish') || lower.includes('deliver') || lower.includes('implement') || lower.includes('finalize'))) {
+      if (lower.includes(firstName) && (lower.includes('complete') || lower.includes('finish') || lower.includes('deliver') || lower.includes('implement') || lower.includes('finalize') || lower.includes('resolve') || lower.includes('commit') || lower.includes('build') || lower.includes('review'))) {
         let deadline = date || '2026-11-05';
         if (lower.includes('nov 3') || lower.includes('november 3')) deadline = '2026-11-03';
         else if (lower.includes('nov 5') || lower.includes('november 5')) deadline = '2026-11-05';

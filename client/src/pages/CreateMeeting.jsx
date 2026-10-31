@@ -8,6 +8,7 @@ import {
   Brain,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Trash2,
   Plus,
   Save,
@@ -47,6 +48,8 @@ export default function CreateMeeting({
   const [reviewedTasks, setReviewedTasks] = useState([]);
   const [reviewedDecisions, setReviewedDecisions] = useState([]);
   const [reviewedFollowUps, setReviewedFollowUps] = useState([]);
+  const [potentialDuplicates, setPotentialDuplicates] = useState([]);
+  const [previousContextCount, setPreviousContextCount] = useState(0);
 
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
@@ -99,6 +102,8 @@ export default function CreateMeeting({
       setReviewedTasks(aiResponse.actionItems || []);
       setReviewedDecisions(aiResponse.decisions || []);
       setReviewedFollowUps(aiResponse.followUpTopics || []);
+      setPotentialDuplicates(aiResponse.potentialDuplicates || []);
+      setPreviousContextCount(aiResponse.previousMeetingsContextCount || 0);
       setIsReviewing(true);
     } catch (err) {
       console.warn('[Gemini AI] API call failed or key not configured:', err.message);
@@ -336,6 +341,57 @@ export default function CreateMeeting({
             onChange={(e) => setReviewedSummary(e.target.value)}
           />
         </div>
+
+        {/* Agent 1 Context Banner */}
+        {previousContextCount > 0 && (
+          <div
+            style={{
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--bg-card-sage)',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '12px',
+              color: 'var(--primary-dark)'
+            }}
+          >
+            <Brain size={15} />
+            <span>
+              <strong>Agent 1 (Meeting Analysis):</strong> Cross-referenced {previousContextCount} previous meeting record(s) from MongoDB for historical context.
+            </span>
+          </div>
+        )}
+
+        {/* Agent 2 Duplicate Task Warning Callout */}
+        {potentialDuplicates.length > 0 && (
+          <div
+            style={{
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--warning-bg)',
+              border: '1px solid var(--warning-border)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertTriangle size={16} color="var(--warning-amber)" />
+              <strong style={{ fontSize: '13px', color: 'var(--text-main)' }}>
+                Agent 2 (Task Management): Detected {potentialDuplicates.length} Potential Duplicate Commitment(s)
+              </strong>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '2px' }}>
+              {potentialDuplicates.map((dup, dIdx) => (
+                <div key={dIdx} style={{ fontSize: '11.5px', color: 'var(--text-secondary)' }}>
+                  • Candidate <strong>"{dup.candidateTitle}"</strong> matches existing active task <strong>"{dup.existingTaskTitle}"</strong> (Assigned to: {dup.existingOwner}, Status: {dup.existingStatus}). {dup.matchReason}.
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Section 2: Extracted Action Items (Editable) */}
         <div className="card">
