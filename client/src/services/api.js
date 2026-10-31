@@ -61,6 +61,14 @@ export const createMeeting = async (meetingData) => {
   return res;
 };
 
+export const analyzeMeetingWithAi = async (meetingPayload) => {
+  const res = await apiRequest('/ai/analyze-meeting', {
+    method: 'POST',
+    body: JSON.stringify(meetingPayload)
+  });
+  return res.data;
+};
+
 export const updateMeeting = async (id, updateData) => {
   const res = await apiRequest(`/meetings/${id}`, {
     method: 'PUT',

@@ -7,6 +7,7 @@ import meetingRoutes from './routes/meetingRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import decisionRoutes from './routes/decisionRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 // Load environment variables
@@ -34,6 +35,7 @@ app.use('/api/meetings', meetingRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/decisions', decisionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
