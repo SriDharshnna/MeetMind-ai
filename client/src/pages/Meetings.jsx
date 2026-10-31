@@ -128,51 +128,53 @@ export default function Meetings({
             </button>
           </div>
         ) : (
-          filteredMeetings.map((m) => (
-            <div
-              key={m.id}
-              className="card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>
-                      {m.title}
-                    </h3>
-                    <span
-                      className={`badge ${
-                        m.status === 'Approved' ? 'badge-completed' : 'badge-amber'
-                      }`}
-                    >
-                      {m.status}
-                    </span>
+          filteredMeetings.map((m) => {
+            const mId = m._id || m.id;
+            return (
+              <div
+                key={mId}
+                className="card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>
+                        {m.title}
+                      </h3>
+                      <span
+                        className={`badge ${
+                          m.status === 'Approved' ? 'badge-completed' : 'badge-amber'
+                        }`}
+                      >
+                        {m.status}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Calendar size={13} color="var(--primary-dark)" />
+                        {formatDate(m.date)}
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Clock size={13} color="var(--primary-dark)" />
+                        {m.time}
+                      </span>
+                    </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <Calendar size={13} color="var(--primary-dark)" />
-                      {formatDate(m.date)}
-                    </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <Clock size={13} color="var(--primary-dark)" />
-                      {m.time}
-                    </span>
-                  </div>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => handleOpenMeeting(mId)}
+                  >
+                    <span>View Details</span>
+                    <ArrowRight size={13} />
+                  </button>
                 </div>
-
-                <button
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => handleOpenMeeting(m.id)}
-                >
-                  <span>View Details</span>
-                  <ArrowRight size={13} />
-                </button>
-              </div>
 
               {/* Summary Preview */}
               <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
@@ -222,7 +224,8 @@ export default function Meetings({
                 </div>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

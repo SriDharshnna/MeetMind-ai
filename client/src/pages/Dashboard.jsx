@@ -250,54 +250,57 @@ export default function Dashboard({
                 </tr>
               </thead>
               <tbody>
-                {meetings.slice(0, 4).map((m) => (
-                  <tr key={m.id}>
-                    <td>
-                      <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>
-                        {m.title}
-                      </span>
-                    </td>
-                    <td style={{ color: 'var(--text-secondary)', fontSize: '12.5px' }}>
-                      {formatDate(m.date)}
-                    </td>
-                    <td>
-                      <div className="avatar-group">
-                        {m.participants.slice(0, 3).map((p, i) => (
-                          <div
-                            key={i}
-                            className="avatar-item"
-                            style={{ backgroundColor: p.color || 'var(--primary-sage)' }}
-                            title={`${p.name} (${p.role})`}
-                          >
-                            {p.avatar}
-                          </div>
-                        ))}
-                        {m.participants.length > 3 && (
-                          <div className="avatar-item" style={{ backgroundColor: 'var(--text-secondary)' }}>
-                            +{m.participants.length - 3}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          m.status === 'Approved' ? 'badge-completed' : 'badge-amber'
-                        }`}
-                      >
-                        {m.status}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <button
-                        className="btn btn-secondary btn-sm"
-                        onClick={() => handleViewMeeting(m.id)}
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {meetings.slice(0, 4).map((m) => {
+                  const mId = m._id || m.id;
+                  return (
+                    <tr key={mId}>
+                      <td>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>
+                          {m.title}
+                        </span>
+                      </td>
+                      <td style={{ color: 'var(--text-secondary)', fontSize: '12.5px' }}>
+                        {formatDate(m.date)}
+                      </td>
+                      <td>
+                        <div className="avatar-group">
+                          {m.participants.slice(0, 3).map((p, i) => (
+                            <div
+                              key={i}
+                              className="avatar-item"
+                              style={{ backgroundColor: p.color || 'var(--primary-sage)' }}
+                              title={`${p.name} (${p.role})`}
+                            >
+                              {p.avatar}
+                            </div>
+                          ))}
+                          {m.participants.length > 3 && (
+                            <div className="avatar-item" style={{ backgroundColor: 'var(--text-secondary)' }}>
+                              +{m.participants.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${
+                            m.status === 'Approved' ? 'badge-completed' : 'badge-amber'
+                          }`}
+                        >
+                          {m.status}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => handleViewMeeting(mId)}
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

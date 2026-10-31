@@ -135,123 +135,130 @@ export default function Decisions({
             <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>No decisions match your current filter.</p>
           </div>
         ) : (
-          filteredDecisions.map((d) => (
-            <div
-              key={d.id}
-              className="card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <ShieldCheck size={18} color="var(--primary-dark)" />
-                  <h3 style={{ fontSize: '15.5px', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-                    {d.title}
-                  </h3>
+          filteredDecisions.map((d) => {
+            const dId = d._id || d.id;
+            const currentStatus = d.implementationStatus || d.status || 'Decided';
+            const mRefId = d.meetingId?._id || d.meetingId;
+            const champion = d.responsiblePerson || d.owner || 'Engineering Team';
 
-                  {d.category && (
-                    <span className="badge badge-sage" style={{ fontSize: '10.5px' }}>
-                      {d.category}
-                    </span>
-                  )}
-                </div>
-
-                {/* Status selector allowing status updates */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <select
-                    className="form-select"
-                    style={{
-                      width: 'auto',
-                      padding: '4px 10px',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      borderRadius: 'var(--radius-pill)',
-                      backgroundColor:
-                        d.status === 'Implemented'
-                          ? 'var(--status-completed-bg)'
-                          : d.status === 'In Progress'
-                          ? 'var(--status-progress-bg)'
-                          : 'var(--bg-main)',
-                      color:
-                        d.status === 'Implemented'
-                          ? 'var(--status-completed)'
-                          : d.status === 'In Progress'
-                          ? 'var(--status-progress)'
-                          : 'var(--text-main)'
-                    }}
-                    value={d.status}
-                    onChange={(e) => handleStatusChange(d.id, e.target.value)}
-                  >
-                    <option value="Decided">Decided</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Implemented">Implemented</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Description */}
-              <p style={{ fontSize: '12.5px', color: 'var(--text-main)', lineHeight: 1.5, margin: 0 }}>
-                {d.description}
-              </p>
-
-              {d.rationale && (
-                <div
-                  style={{
-                    padding: '8px 12px',
-                    borderRadius: 'var(--radius-sm)',
-                    backgroundColor: 'var(--bg-main)',
-                    borderLeft: '3px solid var(--primary-sage)',
-                    fontSize: '11.5px',
-                    color: 'var(--text-secondary)'
-                  }}
-                >
-                  <strong>Context:</strong> {d.rationale}
-                </div>
-              )}
-
-              {/* Footer */}
+            return (
               <div
+                key={dId}
+                className="card"
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  paddingTop: '8px',
-                  borderTop: '1px solid var(--border-light)',
-                  fontSize: '11.5px',
-                  color: 'var(--text-secondary)',
-                  flexWrap: 'wrap',
-                  gap: '8px'
+                  flexDirection: 'column',
+                  gap: '10px'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <span>Champion: <strong>{d.owner || 'Team'}</strong></span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Calendar size={12} />
-                    {formatDate(d.date)}
-                  </span>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <ShieldCheck size={18} color="var(--primary-dark)" />
+                    <h3 style={{ fontSize: '15.5px', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+                      {d.title}
+                    </h3>
+
+                    {d.category && (
+                      <span className="badge badge-sage" style={{ fontSize: '10.5px' }}>
+                        {d.category}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Status selector allowing status updates */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <select
+                      className="form-select"
+                      style={{
+                        width: 'auto',
+                        padding: '4px 10px',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        borderRadius: 'var(--radius-pill)',
+                        backgroundColor:
+                          currentStatus === 'Implemented'
+                            ? 'var(--status-completed-bg)'
+                            : currentStatus === 'In Progress'
+                            ? 'var(--status-progress-bg)'
+                            : 'var(--bg-main)',
+                        color:
+                          currentStatus === 'Implemented'
+                            ? 'var(--status-completed)'
+                            : currentStatus === 'In Progress'
+                            ? 'var(--status-progress)'
+                            : 'var(--text-main)'
+                      }}
+                      value={currentStatus}
+                      onChange={(e) => handleStatusChange(dId, e.target.value)}
+                    >
+                      <option value="Decided">Decided</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Implemented">Implemented</option>
+                    </select>
+                  </div>
                 </div>
 
-                <button
-                  onClick={() => handleOpenMeeting(d.meetingId)}
+                {/* Description */}
+                <p style={{ fontSize: '12.5px', color: 'var(--text-main)', lineHeight: 1.5, margin: 0 }}>
+                  {d.description}
+                </p>
+
+                {d.rationale && (
+                  <div
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: 'var(--radius-sm)',
+                      backgroundColor: 'var(--bg-main)',
+                      borderLeft: '3px solid var(--primary-sage)',
+                      fontSize: '11.5px',
+                      color: 'var(--text-secondary)'
+                    }}
+                  >
+                    <strong>Context:</strong> {d.rationale}
+                  </div>
+                )}
+
+                {/* Footer */}
+                <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '4px',
-                    color: 'var(--primary-dark)',
-                    fontSize: '12px',
-                    fontWeight: 600
+                    justifyContent: 'space-between',
+                    paddingTop: '8px',
+                    borderTop: '1px solid var(--border-light)',
+                    fontSize: '11.5px',
+                    color: 'var(--text-secondary)',
+                    flexWrap: 'wrap',
+                    gap: '8px'
                   }}
-                  title="View originating meeting minutes"
                 >
-                  <span>Meeting: {d.meetingTitle || 'View Record'}</span>
-                  <ExternalLink size={11} />
-                </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <span>Champion: <strong>{champion}</strong></span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Calendar size={12} />
+                      {formatDate(d.date || d.createdAt)}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleOpenMeeting(mRefId)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      color: 'var(--primary-dark)',
+                      fontSize: '12px',
+                      fontWeight: 600
+                    }}
+                    title="View originating meeting minutes"
+                  >
+                    <span>Meeting: {d.meetingTitle || 'View Record'}</span>
+                    <ExternalLink size={11} />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

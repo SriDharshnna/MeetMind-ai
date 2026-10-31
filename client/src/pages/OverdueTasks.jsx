@@ -108,10 +108,13 @@ export default function OverdueTasks({
           </div>
         ) : (
           overdueTasks.map((t) => {
+            const tId = t._id || t.id;
             const meta = getDeadlineMeta(t.deadline, t.status);
+            const mRefId = t.meetingId?._id || t.meetingId;
+
             return (
               <div
-                key={t.id}
+                key={tId}
                 className="card"
                 style={{
                   borderLeft: '4px solid var(--overdue-coral)',
@@ -157,7 +160,7 @@ export default function OverdueTasks({
 
                     <button
                       className="btn btn-primary btn-sm"
-                      onClick={() => onUpdateTaskStatus(t.id, 'Completed')}
+                      onClick={() => onUpdateTaskStatus(tId, 'Completed')}
                       style={{ backgroundColor: 'var(--status-completed)' }}
                     >
                       <CheckCircle2 size={13} />
@@ -186,7 +189,7 @@ export default function OverdueTasks({
                   </div>
 
                   <button
-                    onClick={() => handleOpenMeeting(t.meetingId)}
+                    onClick={() => handleOpenMeeting(mRefId)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',

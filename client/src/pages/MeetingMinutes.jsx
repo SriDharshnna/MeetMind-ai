@@ -27,21 +27,23 @@ export default function MeetingMinutes({
 
   // Find currently selected meeting or default to first
   const currentMeeting =
-    meetings.find((m) => m.id === selectedMeetingId) || meetings[0];
+    meetings.find((m) => (m._id || m.id) === selectedMeetingId) || meetings[0];
+
+  const currentMeetingId = currentMeeting ? (currentMeeting._id || currentMeeting.id) : null;
 
   // Associated tasks for this meeting
   const meetingTasks = tasks.filter(
-    (t) => t.meetingId === currentMeeting?.id
+    (t) => (t.meetingId?._id || t.meetingId) === currentMeetingId
   );
 
   // Associated decisions
   const meetingDecisions = decisions.filter(
-    (d) => d.meetingId === currentMeeting?.id
+    (d) => (d.meetingId?._id || d.meetingId) === currentMeetingId
   );
 
   const handleApprove = () => {
     if (onApproveMeeting && currentMeeting) {
-      onApproveMeeting(currentMeeting.id);
+      onApproveMeeting(currentMeeting._id || currentMeeting.id);
     }
     setToastMessage('Meeting minutes and extracted action items approved and saved.');
     setTimeout(() => {
@@ -88,14 +90,17 @@ export default function MeetingMinutes({
           <select
             className="form-select"
             style={{ width: 'auto', minWidth: '300px', padding: '7px 12px', fontWeight: 600, fontSize: '13px' }}
-            value={currentMeeting.id}
+            value={currentMeeting._id || currentMeeting.id}
             onChange={(e) => setSelectedMeetingId(e.target.value)}
           >
-            {meetings.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.title} ({formatDate(m.date)})
-              </option>
-            ))}
+            {meetings.map((m) => {
+              const mId = m._id || m.id;
+              return (
+                <option key={mId} value={mId}>
+                  {m.title} ({formatDate(m.date)})
+                </option>
+              );
+            })}
           </select>
         </div>
 

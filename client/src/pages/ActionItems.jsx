@@ -229,9 +229,11 @@ export default function ActionItems({
               </tr>
             ) : (
               filteredTasks.map((t) => {
+                const tId = t._id || t.id;
                 const meta = getDeadlineMeta(t.deadline, t.status);
+                const mRefId = t.meetingId?._id || t.meetingId;
                 return (
-                  <tr key={t.id}>
+                  <tr key={tId}>
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                         <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '13.5px' }}>
@@ -256,7 +258,7 @@ export default function ActionItems({
                             backgroundColor: t.ownerAvatar === 'RS' ? '#426B50' : '#8DAF91'
                           }}
                         >
-                          {t.ownerAvatar || t.owner.slice(0, 2).toUpperCase()}
+                          {t.ownerAvatar || (t.owner ? t.owner.slice(0, 2).toUpperCase() : 'TM')}
                         </div>
                         <span style={{ fontSize: '12.5px', fontWeight: 500, color: 'var(--text-main)' }}>
                           {t.owner}
@@ -266,7 +268,7 @@ export default function ActionItems({
 
                     <td>
                       <button
-                        onClick={() => handleOpenMeeting(t.meetingId)}
+                        onClick={() => handleOpenMeeting(mRefId)}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -342,7 +344,7 @@ export default function ActionItems({
                               : 'var(--status-pending)'
                         }}
                         value={t.status}
-                        onChange={(e) => handleStatusChange(t.id, e.target.value)}
+                        onChange={(e) => handleStatusChange(tId, e.target.value)}
                       >
                         <option value="Pending">Pending</option>
                         <option value="In Progress">In Progress</option>
@@ -360,7 +362,7 @@ export default function ActionItems({
                               : t.status === 'Pending'
                               ? 'In Progress'
                               : 'Completed';
-                          handleStatusChange(t.id, nextStatus);
+                          handleStatusChange(tId, nextStatus);
                         }}
                         title="Toggle task completion"
                       >
